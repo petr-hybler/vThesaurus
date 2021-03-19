@@ -1,6 +1,7 @@
 import axios from './../../axios/axios-conf'
+import {key} from './thesaurus.mixin'
 
-let secretKey = "ac87995d-cd2d-43fb-aca5-9ac2aa05661c"
+let secretKey = key
 
 class ThesaurusService {
 

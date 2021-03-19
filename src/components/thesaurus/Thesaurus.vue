@@ -1,60 +1,53 @@
 <template lang="html">
   <div class="container">
-
-    <error-alert :message="error" v-if="error"></error-alert>
-
-    <div class="thesaurus">
-        <h1 class="title py-5">vThesaurus</h1>
-        <div class="input-group mb-3">
-          <input class="form-control form-control-lg"
-                  type="text"
-                  placeholder="What do you want to learn today?"
-                  v-model="word">
-          <div class="input-group-append">
-            <button class="btn btn-info text-center btn-lg" @click="getDefinition()">Search</button>
+    <h1 class="title py-3">vThesaurus</h1>
+      <template v-if="apiKey">
+        <vue-flip :value="isFlipped()" width="" height="">
+           <template v-slot:front class="front">
+              <search-form></search-form>
+           </template>
+           <template v-slot:back class="back">
+             <result-box v-if="isDefinitionReady"></result-box>
+           </template>
+        </vue-flip>
+      </template>
+      <template v-else>
+          <div class="container text-center text-white">
+            <h1>Oops, no API KEY???</h1>
+            <p>Please check <i class="text-muted">./thesaurus.mixin.js</i> and enter your API key</p>
           </div>
-        </div>
-        <div class="container p-5 border" v-if="definition">
-          {{definition}}
-        </div>
-    </div>
+      </template>
   </div>
 </template>
 
 <script>
-  import ThesaurusService from "./thesaurus.service"
-  import ErrorAlert from "./../alerts/Error.vue"
+  import VueFlip from 'vue-flip'
+  import SearchForm from "./search/SearchForm.vue"
+  import Result from "./result/Result.vue"
+  import {thesaurus} from './../../mixins/index'
 
   export default {
     name: "Thesaurus",
+    mixins: [thesaurus.default],
     components: {
-      'error-alert': ErrorAlert
+      'vue-flip': VueFlip,
+      'search-form': SearchForm,
+      'result-box': Result
     },
     data() {
       return {
-        word: null,
-        definition: null,
-        error: null
+        flipped: false
       }
     },
     methods: {
-        getDefinition() {
-          if (this.definition) {
-            ThesaurusService.getDefinition(this.word).then(
-              response => {
-                this.definition = response.data
-              },
-              error => {
-                console.log("Oops:"+error)
-              }
-            )
-          }else{
-            this.error = "You have to insert a word."
-            setTimeout(() => {
-              this.error = null
-            }, 2000)
-          }
-        }
+      isFlipped() {
+        return this.$store.state.thesaurus.flipped;
+      }
+    },
+    computed: {
+      isDefinitionReady(){
+        return (this.$store.state.thesaurus.definition == null) ? false : true
+      }
     }
   }
 </script>
@@ -64,14 +57,5 @@
   color: #41B883;
   text-align: center;
   font-weight: bold;
-}
-.thesaurus {
-  background: #34495E;
-  position: absolute;
-  width: 50%;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #41B883;
 }
 </style>

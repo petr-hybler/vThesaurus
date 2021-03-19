@@ -1,6 +1,6 @@
 <template>
-  <div id="app">
-    <thesaurus></thesaurus>
+  <div id="app" @keydown.esc="close()">
+      <thesaurus></thesaurus>
   </div>
 </template>
 
@@ -11,6 +11,11 @@
     name: 'App',
     components: {
       Thesaurus
+    },
+    methods: {
+      close() {
+        this.$store.dispatch('thesaurus/reset')
+      }
     }
   }
 </script>

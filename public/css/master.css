@@ -1,11 +1,17 @@
 html {
   background: #34495E;
+  overflow: auto;
 }
 
 body {
   font-family: "Exo 2", Arial, sans-serif !important;
+  color: #41B883;
 }
 
 #app {
   background: #34495E;
+}
+
+.text-original {
+  color: #41B883;
 }
